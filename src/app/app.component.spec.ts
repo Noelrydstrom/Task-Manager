@@ -1,29 +1,33 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      declarations: [AppComponent]
     }).compileComponents();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have the 'Task-Manager' title`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('Task-Manager');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
+  beforeEach(() => {
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, Task-Manager');
+  });
+
+  it('should add a task', () => {
+    component.newTask = 'Test Task';
+    component.addTask(component.newTask);
+    expect(component.tasks.length).toBe(1);
+    expect(component.tasks[0]).toBe('Test Task');
+  });
+
+  it('should remove a task', () => {
+    component.tasks = ['Task_1', 'Task_2'];
+    component.removeTask(0);
+    expect(component.tasks.length).toBe(1);
+    expect(component.tasks[0]).toBe('Task_2');
   });
 });
