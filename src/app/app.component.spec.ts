@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { FormsModule } from '@angular/forms';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -7,7 +8,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AppComponent]
+      imports: [AppComponent, FormsModule] // Import the standalone component and FormsModule
     }).compileComponents();
   });
 
@@ -18,16 +19,27 @@ describe('AppComponent', () => {
   });
 
   it('should add a task', () => {
-    component.newTask = 'Test Task';
-    component.addTask(component.newTask);
+    component.newTask = { title: 'Test Task', description: 'Test Description', deadline: '2025-12-31' };
+    component.addTask();
+
     expect(component.tasks.length).toBe(1);
-    expect(component.tasks[0]).toBe('Test Task');
+    expect(component.tasks[0]).toEqual({
+      title: 'Test Task',
+      description: 'Test Description',
+      deadline: '2025-12-31',
+      isEditing: false
+    });
   });
 
   it('should remove a task', () => {
-    component.tasks = ['Task_1', 'Task_2'];
+    component.tasks = [
+      { title: 'Task 1', description: 'Desc 1', deadline: '2025-12-01', isEditing: false },
+      { title: 'Task 2', description: 'Desc 2', deadline: '2025-12-02', isEditing: false }
+    ];
+
     component.removeTask(0);
+
     expect(component.tasks.length).toBe(1);
-    expect(component.tasks[0]).toBe('Task_2');
+    expect(component.tasks[0].title).toBe('Task 2');
   });
 });

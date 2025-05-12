@@ -2,14 +2,28 @@
   <h1>Task Manager</h1>
 
   <div class="task-input">
-    <input [value]="newTask" (input)="handleInput($event)" placeholder="Enter a new task" />
-    <button (click)="addTask(newTask)">Add Task</button>
+    <input [(ngModel)]="newTask.title" placeholder="Task title" />
+    <input [(ngModel)]="newTask.description" placeholder="Description" />
+    <input type="date" [(ngModel)]="newTask.deadline" />
+    <button (click)="addTask()">Add Task</button>
   </div>
 
   <ul>
     <li *ngFor="let task of tasks; let i = index">
-      <span>{{ task }}</span>
-      <button (click)="removeTask(i)">Delete</button>
+      <div *ngIf="!task.isEditing">
+        <span>{{ task.title }}</span>
+        <div class="description">{{ task.description }}</div>
+        <div class="deadline">deadline: {{ task.deadline }}</div>
+        <button (click)="removeTask(i)">Delete</button>
+        <button (click)="editTask(task)">Edit</button>
+      </div>
+
+      <div *ngIf="task.isEditing" edit-mode>
+        <input [(ngModel)]="task.title" placeholder="Task title" />
+        <input [(ngModel)]="task.description" placeholder="Description" />
+        <input type="date" [(ngModel)]="task.deadline" />
+        <button (click)="saveTask(task)" type="save">Save Changes</button>
+      </div>
     </li>
   </ul>
 </div>

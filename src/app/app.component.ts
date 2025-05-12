@@ -1,30 +1,47 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+interface Task {
+  title: string;
+  description: string;
+  deadline: string;
+}
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  tasks: string[] = [];
-  newTask: string = '';
+  tasks: any[] = [];
 
-  handleInput(event: Event) {
-    const input = event.target as HTMLInputElement;
-    this.newTask = input.value;
-  }
+  newTask = {
+    title: '',
+    description: '',
+    deadline: ''
+  };
 
-  addTask(task: string) {
-    if (task.trim()) {
-      this.tasks.push(task);
-      this.newTask = '';
+  addTask() {
+    if (this.newTask.title.trim()) {
+      this.tasks.push({ ...this.newTask, isEditing: false });
+
+      // Clear input fields
+      this.newTask = { title: '', description: '', deadline: '' };
     }
   }
 
   removeTask(index: number) {
     this.tasks.splice(index, 1);
+  }
+
+  editTask(task: any) {
+    task.isEditing = true;
+  }
+
+  saveTask(task: any) {
+    task.isEditing = false;
   }
 }
