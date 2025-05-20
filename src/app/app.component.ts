@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -6,6 +6,8 @@ interface Task {
   title: string;
   description: string;
   deadline: string;
+  completed: boolean;
+  isEditing?: boolean;
 }
 
 @Component({
@@ -16,20 +18,26 @@ interface Task {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  tasks: any[] = [];
+  tasks: Task[] = [];
+  loading = signal(true);
+  user = signal<any>(null);
 
-  newTask = {
+  newTask: Task = {
     title: '',
     description: '',
-    deadline: ''
+    deadline: '',
+    completed: false
   };
 
   addTask() {
     if (this.newTask.title.trim()) {
       this.tasks.push({ ...this.newTask, isEditing: false });
-
-      // Clear input fields
-      this.newTask = { title: '', description: '', deadline: '' };
+      this.newTask = {
+        title: '',
+        description: '',
+        deadline: '',
+        completed: false
+      };
     }
   }
 
@@ -37,11 +45,11 @@ export class AppComponent {
     this.tasks.splice(index, 1);
   }
 
-  editTask(task: any) {
+  editTask(task: Task) {
     task.isEditing = true;
   }
 
-  saveTask(task: any) {
+  saveTask(task: Task) {
     task.isEditing = false;
   }
 }

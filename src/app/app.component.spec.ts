@@ -8,7 +8,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent, FormsModule] // Import the standalone component and FormsModule
+      imports: [AppComponent, FormsModule]
     }).compileComponents();
   });
 
@@ -19,7 +19,12 @@ describe('AppComponent', () => {
   });
 
   it('should add a task', () => {
-    component.newTask = { title: 'Test Task', description: 'Test Description', deadline: '2025-12-31' };
+    component.newTask = { 
+      title: 'Test Task', 
+      description: 'Test Description', 
+      deadline: '2025-12-31',
+      completed: false  // Tillagd
+    };
     component.addTask();
 
     expect(component.tasks.length).toBe(1);
@@ -27,18 +32,30 @@ describe('AppComponent', () => {
       title: 'Test Task',
       description: 'Test Description',
       deadline: '2025-12-31',
+      completed: false,  // Tillagd
       isEditing: false
     });
   });
 
   it('should remove a task', () => {
     component.tasks = [
-      { title: 'Task 1', description: 'Desc 1', deadline: '2025-12-01', isEditing: false },
-      { title: 'Task 2', description: 'Desc 2', deadline: '2025-12-02', isEditing: false }
+      { 
+        title: 'Task 1', 
+        description: 'Desc 1', 
+        deadline: '2025-12-01',
+        completed: false,  // Tillagd
+        isEditing: false 
+      },
+      { 
+        title: 'Task 2', 
+        description: 'Desc 2', 
+        deadline: '2025-12-02',
+        completed: false,  // Tillagd
+        isEditing: false 
+      }
     ];
 
     component.removeTask(0);
-
     expect(component.tasks.length).toBe(1);
     expect(component.tasks[0].title).toBe('Task 2');
   });
