@@ -36,6 +36,10 @@ h1 {
   padding: 22px;
 }
 
+.task-input textarea {
+  margin-bottom: -65px;
+}
+
 .task-input button {
   padding: 24px 40px;
   background-color: #007bff;
@@ -238,6 +242,52 @@ label {
 .task-checkbox input[type="checkbox"] {
   transform: scale(3);
   margin-right: 12px;
+}
+
+/* Sorter css */
+
+.sort-controls {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 25px;
+}
+
+.sort-controls label {
+  font-weight: bold;
+  color: #333;
+}
+
+.sort-controls select {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+  color: #333;
+  transition: border-color 0.3s;
+  font-size: 22px;
+}
+
+.sort-controls select:hover,
+.sort-controls select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Reactive Forms css */
+.error-messages {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+}
+
+.error {
+  color: red;
+  font-size: 20px;
+  flex: 1;
 }
 
 
