@@ -1,4 +1,3 @@
-//FEL HANTERING
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({

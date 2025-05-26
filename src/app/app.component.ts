@@ -1,7 +1,9 @@
 import { Component, signal } from '@angular/core';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormsModule } from '@angular/forms';
 import { SorterPipe } from './pipe/sort.pipe';
+import { SearchPipe } from './pipe/search.pipe';
 import { HighlightOverdueDirective } from './directive/highlight-overdue.directive';
 
 interface Task {
@@ -15,7 +17,15 @@ interface Task {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SorterPipe, HighlightOverdueDirective],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    ReactiveFormsModule,
+    SorterPipe,
+    SearchPipe,
+    HighlightOverdueDirective
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
@@ -25,13 +35,23 @@ export class AppComponent {
   user = signal<any>(null);
 
   sortBy: string = '';
+  searchTerm: string = '';
 
-  // Reactive form för newTask
+  isTaskPage: boolean = true; // ✅ Initialize here to avoid template error
+
   taskForm = new FormGroup({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl(''),
     deadline: new FormControl('', Validators.required),
   });
+
+  constructor(private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.isTaskPage = event.url === '/' || event.urlAfterRedirects === '/';
+      }
+    });
+  }
 
   addTask() {
     if (this.taskForm.valid) {
@@ -46,7 +66,7 @@ export class AppComponent {
       this.taskForm.reset();
       this.loading.set(false);
     } else {
-      this.taskForm.markAllAsTouched(); // visar valideringsfel om ogiltigt
+      this.taskForm.markAllAsTouched();
     }
   }
 
