@@ -14,7 +14,7 @@ export class HighlightOverdueDirective implements OnInit {
     const deadlineDate = new Date(this.appHighlightOverdue);
 
     if (deadlineDate < today) {
-      this.el.nativeElement.style.backgroundColor = '#ffcccc'; // ljusröd
+      this.el.nativeElement.style.backgroundColor = '#ffcccc'; 
     }
   }
 }
