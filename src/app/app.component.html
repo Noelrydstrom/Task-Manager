@@ -11,56 +11,71 @@
 <div class="container" *ngIf="isTaskPage">
   <h1>Task Manager</h1>
 
-  <!-- Task Form -->
-<div class="task-input">
-  <form [formGroup]="taskForm" (ngSubmit)="addTask()" class="task-form-row">
+  <!-- 🔷 Project Selection and Creation -->
+  <div class="project-bar">
+    <input [(ngModel)]="newProjectName" placeholder="New project name" />
+    <button (click)="addProject()">Add Project</button>
 
-    <!-- Title -->
-    <div class="form-group">
-      <input formControlName="title" placeholder="Task title" />
-      <div class="error" style="min-height: 1.8em;">
-        <span *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.errors?.['required']">
-          Title needed.
-        </span>
-        <span *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.errors?.['minlength']">
-          Title too short.
-        </span>
+    <select [(ngModel)]="selectedProjectId">
+      <option [ngValue]="null">-- Select a project --</option>
+      <option *ngFor="let project of projects" [ngValue]="project.id">
+        {{ project.name }}
+      </option>
+    </select>
+  </div>
+
+  <!-- 🔒 Task Form (disabled if no project selected) -->
+  <div class="task-input" *ngIf="selectedProject">
+    <form [formGroup]="taskForm" (ngSubmit)="addTask()" class="task-form-row">
+
+      <!-- Title -->
+      <div class="form-group">
+        <input formControlName="title" placeholder="Task title" />
+        <div class="error" style="min-height: 1.8em;">
+          <span *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.errors?.['required']">
+            Title needed.
+          </span>
+          <span *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.errors?.['minlength']">
+            Title too short.
+          </span>
+        </div>
       </div>
-    </div>
 
-    <!-- Description -->
-    <div class="form-group">
-      <textarea formControlName="description" placeholder="Description"></textarea>
-    </div>
-
-    <!-- Deadline -->
-    <div class="form-group">
-      <input type="date" formControlName="deadline" />
-      <div class="error" style="min-height: 1.8em;">
-        <span *ngIf="taskForm.get('deadline')?.touched && taskForm.get('deadline')?.invalid">
-          Deadline needed.
-        </span>
+      <!-- Description -->
+      <div class="form-group">
+        <textarea formControlName="description" placeholder="Description"></textarea>
       </div>
-    </div>
 
-    <!-- Add Task Button -->
-    <div class="form-group">
-      <button type="submit">Add Task</button>
-    </div>
+      <!-- Deadline -->
+      <div class="form-group">
+        <input type="date" formControlName="deadline" />
+        <div class="error" style="min-height: 1.8em;">
+          <span *ngIf="taskForm.get('deadline')?.touched && taskForm.get('deadline')?.invalid">
+            Deadline needed.
+          </span>
+        </div>
+      </div>
 
-  </form>
-</div>
+      <!-- Add Task Button -->
+      <div class="form-group">
+        <button type="submit">Add Task</button>
+      </div>
+    </form>
+  </div>
 
-
+  <!-- If no project selected -->
+  <div *ngIf="!selectedProject">
+    <p>Please select or create a project to start adding tasks.</p>
+  </div>
 
   <!-- Search bar -->
-  <div class="search-bar">
+  <div class="search-bar" *ngIf="selectedProject">
     <label for="search">Search:</label>
     <input id="search" type="text" [(ngModel)]="searchTerm" placeholder="Sök efter task..." />
   </div>
 
   <!-- Sort dropdown -->
-  <div class="sort-controls">
+  <div class="sort-controls" *ngIf="selectedProject">
     <label for="sortBy">Sort by:</label>
     <select id="sortBy" [(ngModel)]="sortBy">
       <option value="">-- None --</option>
@@ -70,8 +85,8 @@
   </div>
 
   <!-- Task list -->
-  <ul>
-    <li *ngFor="let task of tasks | search:searchTerm | sorter:sortBy; let i = index"
+  <ul *ngIf="selectedProject">
+    <li *ngFor="let task of selectedProject.tasks | search:searchTerm | sorter:sortBy; let i = index"
         [class.completed]="task.completed"
         [appHighlightOverdue]="task.deadline">
 

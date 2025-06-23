@@ -14,6 +14,12 @@ interface Task {
   isEditing?: boolean;
 }
 
+interface Project {
+  id: number;
+  name: string;
+  tasks: Task[];
+}
+
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -30,20 +36,25 @@ interface Task {
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  tasks: Task[] = [];
-  loading = signal(true);
-  user = signal<any>(null);
+  // Projects
+  projects: Project[] = [];
+  selectedProjectId: number | null = null;
+  newProjectName: string = '';
 
+  // Task state (within project)
   sortBy: string = '';
   searchTerm: string = '';
-
-  isTaskPage: boolean = true; // ✅ Initialize here to avoid template error
+  isTaskPage: boolean = true;
 
   taskForm = new FormGroup({
     title: new FormControl('', [Validators.required, Validators.minLength(3)]),
     description: new FormControl(''),
     deadline: new FormControl('', Validators.required),
   });
+
+  // Signals
+  loading = signal(true);
+  user = signal<any>(null);
 
   constructor(private router: Router) {
     this.router.events.subscribe(event => {
@@ -53,7 +64,27 @@ export class AppComponent {
     });
   }
 
+  get selectedProject(): Project | undefined {
+    return this.projects.find(p => p.id === this.selectedProjectId);
+  }
+
+  addProject() {
+    if (!this.newProjectName.trim()) return;
+
+    const newProject: Project = {
+      id: Date.now(),
+      name: this.newProjectName.trim(),
+      tasks: []
+    };
+
+    this.projects.push(newProject);
+    this.selectedProjectId = newProject.id;
+    this.newProjectName = '';
+  }
+
   addTask() {
+    if (!this.selectedProject) return;
+
     if (this.taskForm.valid) {
       const newTask: Task = {
         title: this.taskForm.value.title!,
@@ -62,7 +93,7 @@ export class AppComponent {
         completed: false,
         isEditing: false
       };
-      this.tasks = [...this.tasks, newTask];
+      this.selectedProject.tasks.push(newTask);
       this.taskForm.reset();
       this.loading.set(false);
     } else {
@@ -71,7 +102,8 @@ export class AppComponent {
   }
 
   removeTask(index: number) {
-    this.tasks = this.tasks.filter((_, i) => i !== index);
+    if (!this.selectedProject) return;
+    this.selectedProject.tasks.splice(index, 1);
   }
 
   editTask(task: Task) {
