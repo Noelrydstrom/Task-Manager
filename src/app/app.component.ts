@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import { Router, NavigationEnd, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, FormsModule } from '@angular/forms';
@@ -35,7 +35,7 @@ interface Project {
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   // Projects
   projects: Project[] = [];
   selectedProjectId: number | null = null;
@@ -64,6 +64,13 @@ export class AppComponent {
     });
   }
 
+  ngOnInit(): void {
+    // Simulate a loading delay on app start
+    setTimeout(() => {
+      this.loading.set(false);
+    }, 1000);
+  }
+
   get selectedProject(): Project | undefined {
     return this.projects.find(p => p.id === this.selectedProjectId);
   }
@@ -85,20 +92,25 @@ export class AppComponent {
   addTask() {
     if (!this.selectedProject) return;
 
-    if (this.taskForm.valid) {
-      const newTask: Task = {
-        title: this.taskForm.value.title!,
-        description: this.taskForm.value.description || '',
-        deadline: this.taskForm.value.deadline!,
-        completed: false,
-        isEditing: false
-      };
-      this.selectedProject.tasks.push(newTask);
-      this.taskForm.reset();
-      this.loading.set(false);
-    } else {
-      this.taskForm.markAllAsTouched();
-    }
+    this.loading.set(true); // Show loading spinner
+
+    setTimeout(() => {
+      if (this.taskForm.valid) {
+        const newTask: Task = {
+          title: this.taskForm.value.title!,
+          description: this.taskForm.value.description || '',
+          deadline: this.taskForm.value.deadline!,
+          completed: false,
+          isEditing: false
+        };
+        this.selectedProject!.tasks.push(newTask);
+        this.taskForm.reset();
+      } else {
+        this.taskForm.markAllAsTouched();
+      }
+
+      this.loading.set(false); // Hide spinner after task is added
+    }, 500); // Simulate delay
   }
 
   removeTask(index: number) {
